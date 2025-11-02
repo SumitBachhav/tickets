@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSettings } from "../context/SettingsContext";
 import { getExternalStatus } from "../utils/statusMapping";
+import { Input } from "./ui/Input";
+import { Select } from "./ui/Select";
+import { Button } from "./ui/Button";
+import { Badge } from "./ui/Badge";
 
 export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
   const { enums, statusMapping } = useSettings();
@@ -82,15 +86,26 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {task ? "Edit Task" : "Add New Task"}
-          </h2>
+    <div 
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {task ? "Edit Task" : "Add New Task"}
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              {task ? "Update task details" : "Create a new ticket"}
+            </p>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
           >
             <svg
               className="w-6 h-6"
@@ -108,114 +123,90 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Ticket Number *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.ticketNumber}
-              onChange={(e) =>
-                setFormData({ ...formData, ticketNumber: e.target.value })
-              }
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <Input
+            label="Ticket Number *"
+            type="text"
+            required
+            value={formData.ticketNumber}
+            onChange={(e) =>
+              setFormData({ ...formData, ticketNumber: e.target.value })
+            }
+            error={error && !formData.ticketNumber ? "Ticket number is required" : ""}
+          />
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Status (Internal)
-              </label>
-              <select
-                value={formData.statusInternal}
-                onChange={(e) =>
-                  setFormData({ ...formData, statusInternal: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select...</option>
-                {enums.statusInternal.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Select
+              label="Status (Internal)"
+              value={formData.statusInternal}
+              onChange={(e) =>
+                setFormData({ ...formData, statusInternal: e.target.value })
+              }
+            >
+              <option value="">Select...</option>
+              {enums.statusInternal.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </Select>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Status (External) <span className="text-xs text-gray-500">(Auto-calculated)</span>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                Status (External) <span className="text-xs text-gray-500 dark:text-gray-400">(Auto-calculated)</span>
               </label>
               <input
                 type="text"
                 readOnly
                 value={getExternalStatus(formData.statusInternal, statusMapping) || "—"}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-not-allowed"
+                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-400 cursor-not-allowed"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Todo
-              </label>
-              <select
-                value={formData.todo}
-                onChange={(e) =>
-                  setFormData({ ...formData, todo: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select...</option>
-                {enums.todo.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Rank
-              </label>
-              <select
-                value={formData.rank}
-                onChange={(e) =>
-                  setFormData({ ...formData, rank: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select...</option>
-                {enums.rank.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Asked To
-            </label>
-            <input
-              type="text"
-              value={formData.askedTo}
+            <Select
+              label="Todo"
+              value={formData.todo}
               onChange={(e) =>
-                setFormData({ ...formData, askedTo: e.target.value })
+                setFormData({ ...formData, todo: e.target.value })
               }
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            >
+              <option value="">Select...</option>
+              {enums.todo.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </Select>
+
+            <Select
+              label="Rank"
+              value={formData.rank}
+              onChange={(e) =>
+                setFormData({ ...formData, rank: e.target.value })
+              }
+            >
+              <option value="">Select...</option>
+              {enums.rank.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </Select>
           </div>
 
+          <Input
+            label="Asked To"
+            type="text"
+            value={formData.askedTo}
+            onChange={(e) =>
+              setFormData({ ...formData, askedTo: e.target.value })
+            }
+          />
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Notes
             </label>
             <textarea
@@ -224,7 +215,7 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
                 setFormData({ ...formData, notes: e.target.value })
               }
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
             />
           </div>
 
@@ -244,55 +235,53 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
                   }
                 }}
                 placeholder="Add a tag and press Enter"
-                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
               />
-              <button
+              <Button
                 type="button"
                 onClick={handleAddTag}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                variant="primary"
+                size="md"
               >
                 Add
-              </button>
+              </Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {formData.tags.map((tag, idx) => (
-                <span
-                  key={idx}
-                  className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded text-sm flex items-center gap-1"
-                >
+                <Badge key={idx} variant="primary" className="flex items-center gap-1.5">
                   {tag}
                   <button
                     type="button"
                     onClick={() => handleRemoveTag(idx)}
-                    className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-200"
+                    className="hover:bg-blue-200 dark:hover:bg-blue-800 rounded-full w-4 h-4 flex items-center justify-center transition-colors"
                   >
                     ×
                   </button>
-                </span>
+                </Badge>
               ))}
             </div>
           </div>
 
           {error && (
-            <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg">
-              <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 rounded-lg animate-fade-in">
+              <p className="text-sm text-red-800 dark:text-red-200 font-medium">{error}</p>
             </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-4">
-            <button
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <Button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+              variant="secondary"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              variant="primary"
             >
               {task ? "Update" : "Create"} Task
-            </button>
+            </Button>
           </div>
         </form>
       </div>

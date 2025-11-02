@@ -4,6 +4,7 @@ import { TaskCard } from "../components/TaskCard";
 import { SearchBar } from "../components/SearchBar";
 import { FilterBar } from "../components/FilterBar";
 import { AddEditModal } from "../components/AddEditModal";
+import { Button } from "../components/ui/Button";
 
 export const Dashboard = () => {
   const { tasks, addTask, updateTask, deleteTask } = useTasks();
@@ -118,20 +119,30 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Dashboard
-        </h1>
-        <button
+    <div className="p-6 animate-fade-in">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+            Dashboard
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Track your active tickets and tasks
+          </p>
+        </div>
+        <Button
           onClick={() => {
             setEditingTask(null);
             setIsModalOpen(true);
           }}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          variant="primary"
+          size="md"
+          className="shadow-lg hover:shadow-xl"
         >
-          + Add Task
-        </button>
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Add Task
+        </Button>
       </div>
 
       <div className="mb-4">
@@ -165,7 +176,7 @@ export const Dashboard = () => {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-stagger">
         {filteredTasks.map((task) => (
           <TaskCard
             key={task.id}
@@ -177,8 +188,23 @@ export const Dashboard = () => {
       </div>
 
       {filteredTasks.length === 0 && (
-        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-          No tasks found. Try adjusting your filters or add a new task.
+        <div className="text-center py-20 animate-fade-in">
+          <div className="text-6xl mb-4">🔍</div>
+          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            No tasks found
+          </h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">
+            Try adjusting your filters or add a new task
+          </p>
+          <Button
+            onClick={() => {
+              setEditingTask(null);
+              setIsModalOpen(true);
+            }}
+            variant="primary"
+          >
+            Create First Task
+          </Button>
         </div>
       )}
 

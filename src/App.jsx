@@ -16,9 +16,9 @@ function App() {
       <SettingsProvider>
         <TaskProvider>
           <Router>
-            <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div className="flex min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
               <Sidebar />
-              <main className="flex-1 ml-64">
+              <main className="flex-1 ml-64 animate-fade-in">
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/waiting" element={<Waiting />} />
