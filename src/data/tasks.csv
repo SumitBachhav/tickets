@@ -1,0 +1,8 @@
+ticketNumber,statusInternal,statusExternal,todo,rank,notes,askedTo,lastUpdated,tags
+TICKET-001,validating,in progress,yes-priority,high,Need to verify API integration,John Doe,01/12/2024, 10:30,backend api
+TICKET-002,waiting-external,WFC,yes,normal,Waiting for client feedback,Client Team,02/12/2024, 14:20,client feedback
+TICKET-003,resolved,resolved,no,normal,Issue fixed and deployed,Dev Team,03/12/2024, 09:15,deployment bugfix
+TICKET-004,waiting-internal,in progress,yes-priority,high,Need internal review,QA Team,04/12/2024, 11:45,testing review
+TICKET-005,new,new,yes,normal,New feature request,Product Team,05/12/2024, 16:00,feature enhancement
+TICKET-006,resolved-wfc,resolved,no,normal,Resolved waiting for confirmation,Client Team,06/12/2024, 13:30,client confirmation
+

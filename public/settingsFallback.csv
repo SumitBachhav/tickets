@@ -1,0 +1,2 @@
+darkMode,prefixText,statusInternal,todo,rank,statusMapping
+true,TICKET-,"[""new"",""validating"",""waiting-external"",""waiting-internal"",""resolved"",""resolved-wfc"",""someone else is handling""]","[""yes-priority"",""yes"",""no""]","[""normal"",""high""]","{""new"":""new"",""validating"":""In validation"",""waiting-external"":""WFC"",""waiting-internal"":""In progress"",""resolved"":""Resolved"",""resolved-wfc"":""WFC"",""someone else is handling"":""WFC""}"
