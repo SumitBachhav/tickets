@@ -43,6 +43,8 @@ export const loadSettingsFromCSV = async () => {
                 statusInternal: JSON.parse(row.statusInternal || "[]"),
                 todo: JSON.parse(row.todo || "[]"),
                 rank: JSON.parse(row.rank || "[]"),
+                askedTo: JSON.parse(row.askedTo || "[]"),
+                tags: JSON.parse(row.tags || "[]"),
               },
               statusMapping: JSON.parse(row.statusMapping || "{}"),
             };
@@ -73,6 +75,8 @@ export const generateSettingsCSV = (settings) => {
       statusInternal: JSON.stringify(settings.enums?.statusInternal || []),
       todo: JSON.stringify(settings.enums?.todo || []),
       rank: JSON.stringify(settings.enums?.rank || []),
+      askedTo: JSON.stringify(settings.enums?.askedTo || []),
+      tags: JSON.stringify(settings.enums?.tags || []),
       statusMapping: JSON.stringify(settings.statusMapping || {}),
     },
   ];

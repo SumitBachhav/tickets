@@ -41,6 +41,7 @@ export const loadTasksFromCSV = async (statusMapping) => {
                 rank: row.rank || "",
                 notes: row.notes || "",
                 askedTo: row.askedTo || "",
+                askedToStatus: row.askedToStatus || "pending",
                 lastUpdated: row.lastUpdated || formatTimestamp(),
                 tags: row.tags
                   ? typeof row.tags === "string"

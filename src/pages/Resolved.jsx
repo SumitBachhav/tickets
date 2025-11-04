@@ -13,6 +13,8 @@ export const Resolved = () => {
     todo: "",
     statusInternal: "",
     tag: "",
+    askedTo: "",
+    askedToStatus: "",
   });
   const [sortBy, setSortBy] = useState("lastUpdated");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,6 +63,15 @@ export const Resolved = () => {
         return false;
       if (filters.tag && (!task.tags || !task.tags.includes(filters.tag)))
         return false;
+      if (filters.askedTo && task.askedTo !== filters.askedTo) return false;
+      
+      // Asked To Status filter
+      if (filters.askedToStatus) {
+        const hasAskedTo = task.askedTo && task.askedTo.trim() !== "";
+        if (filters.askedToStatus === "empty" && hasAskedTo) return false;
+        if (filters.askedToStatus === "pending" && (!hasAskedTo || task.askedToStatus !== "pending")) return false;
+        if (filters.askedToStatus === "done" && (!hasAskedTo || task.askedToStatus !== "done")) return false;
+      }
 
       return true;
     });

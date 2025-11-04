@@ -10,5 +10,7 @@ export const defaultEnums = {
   ],
   todo: ["yes-priority", "yes", "no"],
   rank: ["normal", "high"],
+  askedTo: ["John Doe", "Client Team", "Dev Team", "QA Team", "Product Team"],
+  tags: ["backend", "api", "client", "feedback", "deployment", "bugfix", "testing", "review", "feature", "enhancement"],
 };
 

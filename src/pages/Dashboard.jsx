@@ -68,22 +68,33 @@ export const Dashboard = () => {
         return false;
       if (filters.tag && (!task.tags || !task.tags.includes(filters.tag)))
         return false;
+      if (filters.askedTo && task.askedTo !== filters.askedTo) return false;
+      
+      // Asked To Status filter
+      if (filters.askedToStatus) {
+        const hasAskedTo = task.askedTo && task.askedTo.trim() !== "";
+        if (filters.askedToStatus === "empty" && hasAskedTo) return false;
+        if (filters.askedToStatus === "pending" && (!hasAskedTo || task.askedToStatus !== "pending")) return false;
+        if (filters.askedToStatus === "done" && (!hasAskedTo || task.askedToStatus !== "done")) return false;
+      }
 
       return true;
     });
 
     // Sort: by default, rank first (high > normal), then by updated time ascending
+    // Always prioritize high priority tickets first, regardless of sortBy selection
     filtered.sort((a, b) => {
-      if (sortBy === "rank") {
-        const rankOrder = { high: 2, normal: 1 };
-        const rankDiff = (rankOrder[b.rank] || 0) - (rankOrder[a.rank] || 0);
-        if (rankDiff !== 0) return rankDiff;
-        // If ranks are equal, sort by updated time ascending (oldest first)
+      // First, always sort by rank (high priority first)
+      const rankOrder = { high: 2, normal: 1 };
+      const rankDiff = (rankOrder[b.rank] || 0) - (rankOrder[a.rank] || 0);
+      if (rankDiff !== 0) return rankDiff;
+      
+      // If ranks are equal, use the selected sort option
+      if (sortBy === "lastUpdated") {
         return new Date(a.lastUpdated || 0) - new Date(b.lastUpdated || 0);
-      } else if (sortBy === "lastUpdated") {
-        return new Date(b.lastUpdated || 0) - new Date(a.lastUpdated || 0);
       }
-      return 0;
+      // Default: if sortBy is "rank" or anything else, sort by updated time ascending (oldest first)
+      return new Date(a.lastUpdated || 0) - new Date(b.lastUpdated || 0);
     });
 
     return filtered;

@@ -160,13 +160,23 @@ export const Settings = () => {
               values={enums.todo || []}
               onUpdate={handleEnumUpdate("todo")}
             />
-            <EnumEditor
-              label="Rank"
-              values={enums.rank || []}
-              onUpdate={handleEnumUpdate("rank")}
-            />
-          </div>
-        </div>
+                <EnumEditor
+                  label="Rank"
+                  values={enums.rank || []}
+                  onUpdate={handleEnumUpdate("rank")}
+                />
+                <EnumEditor
+                  label="Asked To"
+                  values={enums.askedTo || []}
+                  onUpdate={handleEnumUpdate("askedTo")}
+                />
+                <EnumEditor
+                  label="Tags"
+                  values={enums.tags || []}
+                  onUpdate={handleEnumUpdate("tags")}
+                />
+              </div>
+            </div>
 
         {/* Status Mapping Section */}
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">

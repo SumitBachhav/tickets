@@ -14,6 +14,7 @@ export const exportTasksToCSV = (tasks) => {
     rank: task.rank || "",
     notes: task.notes || "",
     askedTo: task.askedTo || "",
+    askedToStatus: task.askedToStatus || "pending",
     lastUpdated: task.lastUpdated || "",
     tags: Array.isArray(task.tags) ? task.tags.join(", ") : task.tags || "",
   }));
@@ -39,15 +40,16 @@ export const parseCSV = (file) => {
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
-        const tasks = results.data.map((row) => ({
-          ticketNumber: row.ticketNumber || "",
-          statusInternal: row.statusInternal || "",
-          statusExternal: row.statusExternal || "",
-          todo: row.todo || "",
-          rank: row.rank || "",
-          notes: row.notes || "",
-          askedTo: row.askedTo || "",
-          lastUpdated: row.lastUpdated || new Date().toLocaleString("en-IN"),
+      const tasks = results.data.map((row) => ({
+        ticketNumber: row.ticketNumber || "",
+        statusInternal: row.statusInternal || "",
+        statusExternal: row.statusExternal || "",
+        todo: row.todo || "",
+        rank: row.rank || "",
+        notes: row.notes || "",
+        askedTo: row.askedTo || "",
+        askedToStatus: row.askedToStatus || "pending",
+        lastUpdated: row.lastUpdated || new Date().toLocaleString("en-IN"),
           tags: row.tags
             ? typeof row.tags === "string"
               ? row.tags.split(",").map((tag) => tag.trim()).filter(Boolean)
@@ -75,6 +77,8 @@ export const exportSettingsToCSV = (settings) => {
       statusInternal: JSON.stringify(settings.enums?.statusInternal || []),
       todo: JSON.stringify(settings.enums?.todo || []),
       rank: JSON.stringify(settings.enums?.rank || []),
+      askedTo: JSON.stringify(settings.enums?.askedTo || []),
+      tags: JSON.stringify(settings.enums?.tags || []),
       statusMapping: JSON.stringify(settings.statusMapping || {}),
     },
   ];
@@ -102,6 +106,8 @@ export const parseSettingsCSV = (file) => {
               statusInternal: JSON.parse(row.statusInternal || "[]"),
               todo: JSON.parse(row.todo || "[]"),
               rank: JSON.parse(row.rank || "[]"),
+              askedTo: JSON.parse(row.askedTo || "[]"),
+              tags: JSON.parse(row.tags || "[]"),
             },
             statusMapping: JSON.parse(row.statusMapping || "{}"),
           };

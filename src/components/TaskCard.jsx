@@ -90,9 +90,19 @@ export const TaskCard = ({ task, onEdit, onDelete }) => {
       </div>
 
       {task.askedTo && (
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-          <span className="font-semibold text-gray-700 dark:text-gray-300">Asked To:</span> {task.askedTo}
-        </p>
+        <div className="flex items-center gap-2 mb-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="font-semibold text-gray-700 dark:text-gray-300">Asked To:</span> {task.askedTo}
+          </p>
+          {task.askedToStatus && (
+            <Badge 
+              variant={task.askedToStatus === "done" ? "success" : "warning"}
+              className="text-xs"
+            >
+              {task.askedToStatus === "done" ? "✓ Done" : "⏳ Pending"}
+            </Badge>
+          )}
+        </div>
       )}
 
       {task.notes && (

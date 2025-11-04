@@ -5,7 +5,7 @@ import { Button } from "./ui/Button";
 export const FilterBar = ({
   filters,
   onFilterChange,
-  availableTags = [],
+  availableTags = [], // Deprecated - tags now come from settings
 }) => {
   const { enums } = useSettings();
 
@@ -24,6 +24,11 @@ export const FilterBar = ({
       key: "statusInternal",
       label: "Status (Internal)",
       options: enums.statusInternal || [],
+    },
+    {
+      key: "askedTo",
+      label: "Asked To",
+      options: enums.askedTo || [],
     },
   ];
 
@@ -54,17 +59,29 @@ export const FilterBar = ({
         className="min-w-[140px]"
       >
         <option value="">All Tags</option>
-        {availableTags.map((tag) => (
+        {(enums.tags || []).map((tag) => (
           <option key={tag} value={tag}>
             {tag}
           </option>
         ))}
+      </Select>
+      <Select
+        inline
+        value={filters.askedToStatus || ""}
+        onChange={(e) => onFilterChange("askedToStatus", e.target.value)}
+        className="min-w-[140px]"
+      >
+        <option value="">All Asked To Status</option>
+        <option value="empty">Empty</option>
+        <option value="pending">Pending</option>
+        <option value="done">Done</option>
       </Select>
       {hasActiveFilters && (
         <Button
           onClick={() => {
             filterFields.forEach((f) => onFilterChange(f.key, ""));
             onFilterChange("tag", "");
+            onFilterChange("askedToStatus", "");
           }}
           variant="secondary"
           size="sm"

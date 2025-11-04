@@ -15,6 +15,7 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
     rank: "",
     notes: "",
     askedTo: "",
+    askedToStatus: "pending",
     tags: [],
   });
   const [tagInput, setTagInput] = useState("");
@@ -29,6 +30,7 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
         rank: task.rank || "",
         notes: task.notes || "",
         askedTo: task.askedTo || "",
+        askedToStatus: task.askedToStatus || "pending",
         tags: task.tags || [],
       });
     } else {
@@ -39,6 +41,7 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
         rank: "",
         notes: "",
         askedTo: "",
+        askedToStatus: "pending",
         tags: [],
       });
     }
@@ -69,10 +72,10 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
   };
 
   const handleAddTag = () => {
-    if (tagInput.trim()) {
+    if (tagInput && !formData.tags.includes(tagInput)) {
       setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, tagInput.trim()],
+        tags: [...prev.tags, tagInput],
       }));
       setTagInput("");
     }
@@ -196,14 +199,57 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
             </Select>
           </div>
 
-          <Input
-            label="Asked To"
-            type="text"
-            value={formData.askedTo}
-            onChange={(e) =>
-              setFormData({ ...formData, askedTo: e.target.value })
-            }
-          />
+          <div className="grid grid-cols-[1fr_auto] gap-3 items-end">
+            <Select
+              label="Asked To"
+              value={formData.askedTo}
+              onChange={(e) =>
+                setFormData({ ...formData, askedTo: e.target.value })
+              }
+            >
+              <option value="">Select...</option>
+              {(enums.askedTo || []).map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </Select>
+            {formData.askedTo && (
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                  Status
+                </label>
+                <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData({ ...formData, askedToStatus: "pending" })
+                    }
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                      formData.askedToStatus === "pending"
+                        ? "bg-orange-500 text-white shadow-md"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+                    }`}
+                  >
+                    Pending
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData({ ...formData, askedToStatus: "done" })
+                    }
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                      formData.askedToStatus === "done"
+                        ? "bg-green-500 text-white shadow-md"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+                    }`}
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
@@ -220,28 +266,28 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Tags
             </label>
             <div className="flex gap-2 mb-2">
-              <input
-                type="text"
+              <Select
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddTag();
-                  }
-                }}
-                placeholder="Add a tag and press Enter"
-                className="flex-1 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
-              />
+                className="flex-1"
+              >
+                <option value="">Select a tag...</option>
+                {(enums.tags || []).map((tag) => (
+                  <option key={tag} value={tag}>
+                    {tag}
+                  </option>
+                ))}
+              </Select>
               <Button
                 type="button"
                 onClick={handleAddTag}
                 variant="primary"
                 size="md"
+                disabled={!tagInput || formData.tags.includes(tagInput)}
               >
                 Add
               </Button>
