@@ -1,22 +1,22 @@
-export const statusColors = {
-  validating: "bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-100",
-  "in progress": "bg-yellow-200 dark:bg-yellow-700 text-yellow-900 dark:text-yellow-100",
-  resolved: "bg-green-200 dark:bg-green-700 text-green-900 dark:text-green-100",
-  "resolved-wfc": "bg-green-200 dark:bg-green-700 text-green-900 dark:text-green-100",
-  waiting: "bg-orange-200 dark:bg-orange-700 text-orange-900 dark:text-white",
-  "waiting-external": "bg-orange-200 dark:bg-orange-700 text-orange-900 dark:text-white",
-  "waiting-internal": "bg-orange-200 dark:bg-orange-700 text-orange-900 dark:text-white",
-  default: "bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100",
-};
+/**
+ * Color configuration utilities for status badges
+ * @module utils/colorConfig
+ */
 
+import { STATUS_COLORS } from "../constants";
+
+/**
+ * Get color classes for a given status
+ * @param {string} status - Status value
+ * @returns {string} Tailwind CSS color classes
+ */
 export const getStatusColor = (status) => {
-  if (!status) return statusColors.default;
+  if (!status) return STATUS_COLORS.default;
   const statusLower = status.toLowerCase();
-  for (const [key, value] of Object.entries(statusColors)) {
+  for (const [key, value] of Object.entries(STATUS_COLORS)) {
     if (statusLower.includes(key.toLowerCase())) {
       return value;
     }
   }
-  return statusColors.default;
+  return STATUS_COLORS.default;
 };
-

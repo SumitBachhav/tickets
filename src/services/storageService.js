@@ -1,8 +1,14 @@
-const STORAGE_KEYS = {
-  TASKS: "ticket_tasks",
-  SETTINGS: "ticket_settings",
-};
+/**
+ * Storage service for localStorage operations
+ * @module services/storageService
+ */
 
+import { STORAGE_KEYS } from "../constants";
+
+/**
+ * Load tasks from localStorage
+ * @returns {Array<Object>} Array of tasks or empty array
+ */
 export const loadTasksFromStorage = () => {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.TASKS);
@@ -13,13 +19,17 @@ export const loadTasksFromStorage = () => {
   }
 };
 
+/**
+ * Save tasks to localStorage
+ * @param {Array<Object>} tasks - Tasks to save
+ * @throws {Error} If storage quota is exceeded or save fails
+ */
 export const saveTasksToStorage = (tasks) => {
   try {
     const serialized = JSON.stringify(tasks);
     localStorage.setItem(STORAGE_KEYS.TASKS, serialized);
   } catch (error) {
     console.error("Error saving tasks to localStorage:", error);
-    // Re-throw if quota exceeded or other critical errors
     if (error.name === "QuotaExceededError") {
       throw new Error("Storage quota exceeded. Please free up some space.");
     }
@@ -27,6 +37,10 @@ export const saveTasksToStorage = (tasks) => {
   }
 };
 
+/**
+ * Load settings from localStorage
+ * @returns {Object|null} Settings object or null
+ */
 export const loadSettingsFromStorage = () => {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.SETTINGS);
@@ -37,6 +51,10 @@ export const loadSettingsFromStorage = () => {
   }
 };
 
+/**
+ * Save settings to localStorage
+ * @param {Object} settings - Settings object to save
+ */
 export const saveSettingsToStorage = (settings) => {
   try {
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));

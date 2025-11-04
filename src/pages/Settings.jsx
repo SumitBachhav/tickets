@@ -5,8 +5,8 @@ import { StatusMappingEditor } from "../components/StatusMappingEditor";
 import {
   exportSettingsToCSV,
   downloadCSV,
-  parseSettingsCSV,
-} from "../utils/csvUtils";
+  parseSettingsFromCSV,
+} from "../services/csvService";
 
 export const Settings = () => {
   const {
@@ -56,7 +56,7 @@ export const Settings = () => {
       return;
     }
 
-    parseSettingsCSV(file)
+        parseSettingsFromCSV(file)
       .then((parsedSettings) => {
         if (
           window.confirm(

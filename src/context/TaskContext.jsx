@@ -3,13 +3,13 @@ import { createContext, useContext, useState, useEffect } from "react";
 import {
   loadTasksFromStorage,
   saveTasksToStorage,
-} from "../utils/localStorageUtils";
+} from "../services/storageService";
 import { formatTimestamp } from "../utils/dateUtils";
-import { getSampleTasks } from "../utils/sampleData";
+import { getSampleTasks } from "../data/sampleData";
 import { getExternalStatus } from "../utils/statusMapping";
 import { useSettings } from "./SettingsContext";
 import { useToast } from "./ToastContext";
-import { loadTasksFromCSV } from "../utils/tasksCSVUtils";
+import { loadTasksFromCSV } from "../services/csvService";
 
 const TaskContext = createContext();
 

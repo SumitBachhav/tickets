@@ -1,4 +1,12 @@
-// Sample data to load when localStorage is empty
+/**
+ * Sample data for initial load
+ * @module data/sampleData
+ */
+
+/**
+ * Get sample tasks for initial load
+ * @returns {Array<Object>} Array of sample tasks
+ */
 export const getSampleTasks = () => {
   return [
     {

@@ -3,14 +3,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 import {
   loadSettingsFromStorage,
   saveSettingsToStorage,
-} from "../utils/localStorageUtils";
-import { defaultEnums } from "../utils/enums";
-import { defaultStatusMapping } from "../utils/statusMapping";
-import { getSampleSettings } from "../utils/sampleSettings";
-import {
-  loadSettingsFromCSV,
-  getDefaultSettings,
-} from "../utils/settingsCSVUtils";
+} from "../services/storageService";
+import { DEFAULT_ENUMS, DEFAULT_STATUS_MAPPING } from "../constants";
+import { getDefaultSettings } from "../data/sampleSettings";
+import { loadSettingsFromCSV } from "../services/csvService";
 
 const SettingsContext = createContext();
 
@@ -23,9 +19,9 @@ export const useSettings = () => {
 };
 
 export const SettingsProvider = ({ children }) => {
-  const [enums, setEnums] = useState(defaultEnums);
+  const [enums, setEnums] = useState(DEFAULT_ENUMS);
   const [darkMode, setDarkMode] = useState(false);
-  const [statusMapping, setStatusMapping] = useState(defaultStatusMapping);
+  const [statusMapping, setStatusMapping] = useState(DEFAULT_STATUS_MAPPING);
   const [prefixText, setPrefixText] = useState("");
   const [isInitialized, setIsInitialized] = useState(false);
   const [settingsError, setSettingsError] = useState(null);

@@ -128,13 +128,14 @@ JSON.parse(localStorage.getItem('ticket_settings'))
 
 **Features:**
 - **Search**: By ticket number or tags
-- **Filter**: By rank, todo, status (internal), or tags
+- **Filter**: By rank, todo, status (internal), tags, asked to, or asked to status
 - **Sort**: By rank (high → normal) then by last updated (oldest first), or by last updated (newest first)
 - **Add Task**: Button in top-right to create new ticket
 
 **Default Sorting:**
-- First: Rank (high priority first)
-- Then: Last updated (oldest first)
+- **Priority First**: High priority tickets always shown first, regardless of sort selection
+- Then: Last updated (oldest first) within each priority group
+- **Note**: High priority tickets always appear at the top, even when sorting by "Last Updated"
 
 ### 2. Waiting Page (`/waiting`)
 **Purpose**: View tickets waiting for action
@@ -160,8 +161,14 @@ JSON.parse(localStorage.getItem('ticket_settings'))
 **Features:**
 - **Pagination**: Shows 20 tickets per page
 - **Search**: By ticket number or tags
-- **Filter**: By rank, todo, status (internal), or tags
+- **Filter**: By rank, todo, status (internal), tags, asked to, or asked to status
 - **Sort**: By last updated (newest/oldest) or by rank
+
+**Filter Options:**
+- **Asked To Status**: Filter by:
+  - Empty: Tickets with no "Asked To" value
+  - Pending: Tickets with "Asked To" set and status = "pending"
+  - Done: Tickets with "Asked To" set and status = "done"
 
 ### 5. Import/Export Page (`/import-export`)
 **Purpose**: Backup and restore ticket data
@@ -183,7 +190,7 @@ JSON.parse(localStorage.getItem('ticket_settings'))
 
 **Sections:**
 1. **Appearance**: Dark mode toggle
-2. **Customize Enums**: Edit dropdown options for status, todo, rank
+2. **Customize Enums**: Edit dropdown options for status, todo, rank, asked to, and tags
 3. **Status Mapping**: Configure how internal statuses map to external
 4. **Ticket Number Prefix**: Set prefix for copying tickets
 5. **Import/Export Settings**: Backup/restore settings
@@ -201,7 +208,7 @@ JSON.parse(localStorage.getItem('ticket_settings'))
 ### Customize Enums
 **Location**: Settings → Customize Enums
 
-You can edit three enum types:
+You can edit five enum types:
 
 1. **Status (Internal)**: Internal status options
    - Default: new, validating, waiting-external, waiting-internal, resolved, resolved-wfc, someone else is handling
@@ -214,6 +221,19 @@ You can edit three enum types:
 3. **Rank**: Priority rank options
    - Default: normal, high
    - Used in: Task creation/editing, filtering, sorting
+
+4. **Asked To**: Person/team options for "Asked To" field
+   - Default: John Doe, Client Team, Dev Team, QA Team, Product Team
+   - Used in: Task creation/editing (dropdown selection)
+   - Customizable list of people/teams you commonly assign tasks to
+   - **Status Toggle**: When a person/team is selected, a toggle appears with "Pending" and "Done" options
+   - **Status Badge**: Shows on task cards (⏳ Pending or ✓ Done)
+
+5. **Tags**: Tag options for categorizing tickets
+   - Default: backend, api, client, feedback, deployment, bugfix, testing, review, feature, enhancement
+   - Used in: Task creation/editing (dropdown selection)
+   - Customizable list of tags for organizing and filtering tickets
+   - **Note**: Tags are now selected from dropdown (no free text input)
 
 **How to Edit:**
 - Click on an enum value to edit
@@ -305,9 +325,14 @@ This controls how internal statuses automatically map to external statuses.
    - **Status (External)**: *Auto-calculated* - shown as read-only
    - **Todo**: Select from dropdown
    - **Rank**: Select from dropdown
-   - **Asked To**: Text field (optional)
+   - **Asked To**: Select from dropdown (optional)
+     - When selected, a toggle appears with "Pending" and "Done" options
+     - Default: "Pending"
    - **Notes**: Text area (optional)
-   - **Tags**: Add tags by typing and pressing Enter
+   - **Tags**: Select from dropdown (can add multiple tags)
+     - Click "Add" button after selecting a tag
+     - Tags are selected from predefined list (customizable in Settings)
+     - Cannot add duplicate tags
 3. Click "Create Task"
 4. **Toast Notification**: Shows "Ticket 'XXX' created successfully!"
 5. **Auto-Save**: Task saved to localStorage immediately
@@ -366,11 +391,17 @@ This controls how internal statuses automatically map to external statuses.
 
 **askedTo**: 
 - Person/team who asked for this ticket
-- Free text field
+- Selected from dropdown (customizable in Settings)
+- **askedToStatus**: Status of the "Asked To" assignment
+  - Options: "pending" or "done"
+  - Toggle appears when "Asked To" is selected
+  - Shown as badge on task cards (⏳ Pending or ✓ Done)
 
 **tags**: 
 - Array of tags
-- Add by typing and pressing Enter
+- Selected from dropdown (customizable in Settings)
+- Select a tag from dropdown, then click "Add" button
+- Cannot add duplicate tags to the same task
 - Used in search and filtering
 - Displayed as colored pills on task cards
 
@@ -385,7 +416,7 @@ This controls how internal statuses automatically map to external statuses.
 - Ticket number (clickable/linkable)
 - Status badge (color-coded)
 - Todo and Rank badges
-- Asked To field
+- Asked To field with status badge (⏳ Pending or ✓ Done)
 - Notes preview (truncated)
 - Tags (as colored pills)
 - Last updated timestamp
@@ -438,6 +469,7 @@ TICKET-003 Resolved
 - rank
 - notes
 - askedTo
+- askedToStatus (pending or done)
 - lastUpdated
 - tags (comma-separated)
 
@@ -583,6 +615,52 @@ Shows in form as read-only
 
 ---
 
+## Codebase Structure
+
+### Folder Organization
+
+The application follows a modular structure for maintainability:
+
+```
+src/
+├── constants/          # Application-wide constants
+│   └── index.js        # All constants (STORAGE_KEYS, DEFAULT_ENUMS, etc.)
+│
+├── services/           # Service layer for data operations
+│   ├── storageService.js    # localStorage operations
+│   └── csvService.js         # CSV import/export operations
+│
+├── hooks/              # Custom React hooks
+│   ├── useTaskFilters.js     # Task filtering and sorting logic
+│   └── useUniqueTags.js      # Extract unique tags from tasks
+│
+├── utils/              # Pure utility functions
+│   ├── dateUtils.js          # Date formatting and parsing
+│   ├── statusMapping.js      # Status mapping utilities
+│   └── colorConfig.js        # Status color configuration
+│
+├── data/               # Data files and sample data
+│   ├── sampleData.js         # Sample tasks
+│   ├── sampleSettings.js     # Sample/default settings
+│   ├── settings.csv          # Settings CSV file
+│   └── tasks.csv             # Tasks CSV file
+│
+├── components/         # React components
+├── context/           # React contexts
+└── pages/             # Page components
+```
+
+### Service Layer
+
+- **storageService.js**: Handles all localStorage read/write operations
+- **csvService.js**: Handles CSV import/export operations
+- Centralized error handling and consistent API
+
+### Custom Hooks
+
+- **useTaskFilters**: Reusable filtering and sorting logic across pages
+- **useUniqueTags**: Extract unique tags from task arrays
+
 ## Technical Details
 
 ### Data Structure
@@ -597,9 +675,10 @@ Shows in form as read-only
   todo: string,            // Optional
   rank: string,            // Optional
   notes: string,           // Optional
-  askedTo: string,         // Optional
+  askedTo: string,         // Optional (selected from dropdown)
+  askedToStatus: string,   // Optional ("pending" or "done")
   lastUpdated: string,     // Auto-generated timestamp
-  tags: string[]           // Array of tag strings
+  tags: string[]           // Array of tag strings (selected from dropdown)
 }
 ```
 
@@ -611,7 +690,9 @@ Shows in form as read-only
   enums: {
     statusInternal: string[],
     todo: string[],
-    rank: string[]
+    rank: string[],
+    askedTo: string[],    // Person/team options
+    tags: string[]         // Tag options
   },
   statusMapping: {
     [internalStatus]: externalStatus
@@ -636,6 +717,8 @@ Shows in form as read-only
 - statusInternal: ["new", "validating", "waiting-external", "waiting-internal", "resolved", "resolved-wfc", "someone else is handling"]
 - todo: ["yes-priority", "yes", "no"]
 - rank: ["normal", "high"]
+- askedTo: ["John Doe", "Client Team", "Dev Team", "QA Team", "Product Team"]
+- tags: ["backend", "api", "client", "feedback", "deployment", "bugfix", "testing", "review", "feature", "enhancement"]
 
 **Default Status Mapping:**
 ```javascript
@@ -684,7 +767,34 @@ This manual is located at: `public/manual.md`
 
 ---
 
-**Last Updated**: Application Version - Current
-**Data Persistence**: localStorage (persists across sessions)
-**Offline Support**: Yes (fully functional offline)
+---
+
+## Recent Updates
+
+### Latest Changes
+
+1. **"Asked To" Field Enhancement**:
+   - Changed from text input to dropdown selection
+   - Added status toggle (Pending/Done) when "Asked To" is selected
+   - Status badge displayed on task cards
+
+2. **Tags Enhancement**:
+   - Changed from free text input to dropdown selection
+   - Tags now selected from predefined list (customizable in Settings)
+   - Prevents duplicate tags and ensures consistency
+
+3. **Dashboard Sorting**:
+   - High priority tickets always shown first, regardless of sort selection
+   - Ensures important tickets are always visible
+
+4. **Codebase Refactoring**:
+   - Modular folder structure (constants, services, hooks)
+   - Separation of concerns for better maintainability
+   - Service layer for data operations
+   - Custom hooks for reusable logic
+
+**Last Updated**: Application Version - Current  
+**Data Persistence**: localStorage (persists across sessions)  
+**Offline Support**: Yes (fully functional offline)  
+**Codebase**: Modular, industry-standard structure
 

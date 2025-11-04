@@ -1,16 +1,20 @@
-// Default status mapping: internal -> external
-export const defaultStatusMapping = {
-  new: "new",
-  validating: "In validation",
-  "waiting-external": "WFC",
-  "waiting-internal": "In progress",
-  resolved: "Resolved",
-  "resolved-wfc": "WFC",
-  "someone else is handling": "WFC",
-};
+/**
+ * Status mapping utilities
+ * @module utils/statusMapping
+ */
 
-export const getExternalStatus = (internalStatus, mapping = defaultStatusMapping) => {
+import { DEFAULT_STATUS_MAPPING } from "../constants";
+
+/**
+ * Get external status from internal status using mapping
+ * @param {string} internalStatus - Internal status value
+ * @param {Object<string, string>} mapping - Status mapping object
+ * @returns {string} External status or empty string
+ */
+export const getExternalStatus = (
+  internalStatus,
+  mapping = DEFAULT_STATUS_MAPPING
+) => {
   if (!internalStatus) return "";
   return mapping[internalStatus] || "";
 };
-

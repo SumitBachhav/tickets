@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useTasks } from "../context/TaskContext";
 import { useSettings } from "../context/SettingsContext";
-import { exportTasksToCSV, downloadCSV, parseCSV } from "../utils/csvUtils";
+import {
+  exportTasksToCSV,
+  downloadCSV,
+  parseTasksFromCSV,
+} from "../services/csvService";
 import { getExternalStatus } from "../utils/statusMapping";
 import { isWithinLast24Hours } from "../utils/dateUtils";
 
@@ -33,7 +37,7 @@ export const ImportExport = () => {
       return;
     }
 
-    parseCSV(file)
+    parseTasksFromCSV(file)
       .then((parsedTasks) => {
         if (parsedTasks.length === 0) {
           setImportStatus("Error: No valid tasks found in CSV file.");
