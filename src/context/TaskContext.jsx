@@ -27,13 +27,32 @@ export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Helper function to normalize tags in tasks
+  const normalizeTaskTags = (task) => {
+    if (!task.tags) {
+      return { ...task, tags: [] };
+    }
+    if (Array.isArray(task.tags)) {
+      return { ...task, tags: task.tags.filter(Boolean) };
+    }
+    if (typeof task.tags === "string") {
+      return {
+        ...task,
+        tags: task.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
+      };
+    }
+    return { ...task, tags: [] };
+  };
+
   useEffect(() => {
     // Load tasks: localStorage first, then fallback to tasks.csv, then sample data
     const loadTasks = async () => {
       // Try localStorage first
       const storedTasks = loadTasksFromStorage();
       if (storedTasks && storedTasks.length > 0) {
-        setTasks(storedTasks);
+        // Normalize tags for all stored tasks
+        const normalizedTasks = storedTasks.map(normalizeTaskTags);
+        setTasks(normalizedTasks);
         setLoading(false);
         return;
       }
@@ -51,9 +70,11 @@ export const TaskProvider = ({ children }) => {
       }
       
       if (csvTasks && csvTasks.length > 0) {
-        setTasks(csvTasks);
+        // Normalize tags for all CSV tasks
+        const normalizedTasks = csvTasks.map(normalizeTaskTags);
+        setTasks(normalizedTasks);
         // Also save to localStorage for runtime persistence
-        saveTasksToStorage(csvTasks);
+        saveTasksToStorage(normalizedTasks);
       } else {
         // CSV file exists but empty - use sample data
         const sampleTasks = getSampleTasks();
@@ -94,12 +115,13 @@ export const TaskProvider = ({ children }) => {
 
       // Auto-calculate external status from internal status
       const externalStatus = getExternalStatus(task.statusInternal, statusMapping);
-      const newTask = {
+      const newTask = normalizeTaskTags({
         ...task,
         statusExternal: externalStatus,
         id: Date.now().toString(),
         lastUpdated: formatTimestamp(),
-      };
+        tags: Array.isArray(task.tags) ? task.tags : [],
+      });
 
       setTasks((prev) => [...prev, newTask]);
       showToast(`Ticket "${task.ticketNumber}" created successfully!`, "success");
@@ -152,11 +174,20 @@ export const TaskProvider = ({ children }) => {
                 statusMapping
               );
             }
-            return {
+            // Ensure tags are always an array
+            if (updatedFields.tags !== undefined) {
+              updatedFields.tags = Array.isArray(updatedFields.tags)
+                ? updatedFields.tags.filter(Boolean)
+                : [];
+            } else {
+              // Preserve existing tags if not being updated
+              updatedFields.tags = task.tags || [];
+            }
+            return normalizeTaskTags({
               ...task,
               ...updatedFields,
               lastUpdated: formatTimestamp(),
-            };
+            });
           }
           return task;
         })
@@ -181,11 +212,13 @@ export const TaskProvider = ({ children }) => {
   };
 
   const importTasks = (importedTasks) => {
-    const tasksWithIds = importedTasks.map((task, index) => ({
-      ...task,
-      id: task.id || `imported-${Date.now()}-${index}`,
-      lastUpdated: task.lastUpdated || formatTimestamp(),
-    }));
+    const tasksWithIds = importedTasks.map((task, index) =>
+      normalizeTaskTags({
+        ...task,
+        id: task.id || `imported-${Date.now()}-${index}`,
+        lastUpdated: task.lastUpdated || formatTimestamp(),
+      })
+    );
     setTasks(tasksWithIds);
   };
 

@@ -74,6 +74,18 @@ export const FilterBar = ({
         <option value="">All Asked To Status</option>
         <option value="empty">Empty</option>
         <option value="pending">Pending</option>
+        <option value="response-received">Response Received (RR)</option>
+        <option value="done">Done</option>
+      </Select>
+      <Select
+        inline
+        value={filters.docStatus || ""}
+        onChange={(e) => onFilterChange("docStatus", e.target.value)}
+        className="min-w-[140px]"
+      >
+        <option value="">All DOC Status</option>
+        <option value="no">No</option>
+        <option value="yes">Yes</option>
         <option value="done">Done</option>
       </Select>
       {hasActiveFilters && (
@@ -82,6 +94,7 @@ export const FilterBar = ({
             filterFields.forEach((f) => onFilterChange(f.key, ""));
             onFilterChange("tag", "");
             onFilterChange("askedToStatus", "");
+            onFilterChange("docStatus", "");
           }}
           variant="secondary"
           size="sm"

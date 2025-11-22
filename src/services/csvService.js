@@ -40,6 +40,7 @@ export const loadTasksFromCSV = async (statusMapping) => {
             notes: row.notes || "",
             askedTo: row.askedTo || "",
             askedToStatus: row.askedToStatus || "pending",
+            docStatus: row.docStatus || "no",
             lastUpdated: row.lastUpdated || formatTimestamp(),
             tags: row.tags
               ? typeof row.tags === "string"
@@ -152,6 +153,7 @@ export const exportTasksToCSV = (tasks) => {
     notes: task.notes || "",
     askedTo: task.askedTo || "",
     askedToStatus: task.askedToStatus || "pending",
+    docStatus: task.docStatus || "no",
     lastUpdated: task.lastUpdated || "",
     tags: Array.isArray(task.tags)
       ? task.tags.join(", ")
@@ -181,6 +183,7 @@ export const parseTasksFromCSV = (file) => {
           notes: row.notes || "",
           askedTo: row.askedTo || "",
           askedToStatus: row.askedToStatus || "pending",
+          docStatus: row.docStatus || "no",
           lastUpdated:
             row.lastUpdated || new Date().toLocaleString("en-IN"),
           tags: row.tags

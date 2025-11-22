@@ -15,6 +15,7 @@ export const Waiting = () => {
     tag: "",
     askedTo: "",
     askedToStatus: "",
+    docStatus: "",
   });
   const [sortBy, setSortBy] = useState("lastUpdated");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,7 +71,15 @@ export const Waiting = () => {
         const hasAskedTo = task.askedTo && task.askedTo.trim() !== "";
         if (filters.askedToStatus === "empty" && hasAskedTo) return false;
         if (filters.askedToStatus === "pending" && (!hasAskedTo || task.askedToStatus !== "pending")) return false;
+        if (filters.askedToStatus === "response-received" && (!hasAskedTo || task.askedToStatus !== "response-received")) return false;
         if (filters.askedToStatus === "done" && (!hasAskedTo || task.askedToStatus !== "done")) return false;
+      }
+
+      // DOC Status filter
+      if (filters.docStatus) {
+        if (filters.docStatus === "no" && task.docStatus !== "no") return false;
+        if (filters.docStatus === "yes" && task.docStatus !== "yes") return false;
+        if (filters.docStatus === "done" && task.docStatus !== "done") return false;
       }
 
       return true;

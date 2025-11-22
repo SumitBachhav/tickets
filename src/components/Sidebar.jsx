@@ -9,6 +9,7 @@ export const Sidebar = () => {
     { path: "/waiting", label: "Waiting", icon: "⏳" },
     { path: "/resolved", label: "Resolved", icon: "✅" },
     { path: "/all", label: "All Tickets", icon: "📋" },
+    { path: "/asked-to", label: "Asked To", icon: "👤" },
     { path: "/import-export", label: "Import/Export", icon: "💾" },
     { path: "/settings", label: "Settings", icon: "⚙️" },
   ];

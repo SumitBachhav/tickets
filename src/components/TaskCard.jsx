@@ -19,17 +19,29 @@ export const TaskCard = ({ task, onEdit, onDelete }) => {
     return "default";
   };
 
+  const handleCardClick = () => {
+    onEdit(task);
+  };
+
+  const handleButtonClick = (e, action) => {
+    e.stopPropagation();
+    action();
+  };
+
   return (
-    <Card className="animate-slide-up">
+    <Card 
+      className="animate-slide-up cursor-pointer hover:shadow-lg transition-all duration-200"
+      onClick={handleCardClick}
+    >
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <a
-              href={`#${task.ticketNumber}`}
-              className="text-lg font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
+            <button
+              onClick={(e) => handleButtonClick(e, () => onEdit(task))}
+              className="text-lg font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors text-left"
             >
               {task.ticketNumber}
-            </a>
+            </button>
             <Badge className={`${statusColor} text-xs font-semibold`}>
               {task.statusInternal || task.statusExternal || "N/A"}
             </Badge>
@@ -49,7 +61,7 @@ export const TaskCard = ({ task, onEdit, onDelete }) => {
         </div>
         <div className="flex gap-1.5 ml-2 flex-shrink-0">
           <button
-            onClick={() => onEdit(task)}
+            onClick={(e) => handleButtonClick(e, () => onEdit(task))}
             className="p-1.5 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200"
             aria-label="Edit task"
           >
@@ -68,7 +80,7 @@ export const TaskCard = ({ task, onEdit, onDelete }) => {
             </svg>
           </button>
           <button
-            onClick={() => onDelete(task.id)}
+            onClick={(e) => handleButtonClick(e, () => onDelete(task.id))}
             className="p-1.5 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
             aria-label="Delete task"
           >
@@ -96,12 +108,46 @@ export const TaskCard = ({ task, onEdit, onDelete }) => {
           </p>
           {task.askedToStatus && (
             <Badge 
-              variant={task.askedToStatus === "done" ? "success" : "warning"}
+              variant={
+                task.askedToStatus === "done" 
+                  ? "success" 
+                  : task.askedToStatus === "response-received"
+                  ? "primary"
+                  : "warning"
+              }
               className="text-xs"
             >
-              {task.askedToStatus === "done" ? "✓ Done" : "⏳ Pending"}
+              {task.askedToStatus === "done" 
+                ? "✓ Done" 
+                : task.askedToStatus === "response-received"
+                ? "📨 RR"
+                : "⏳ Pending"}
             </Badge>
           )}
+        </div>
+      )}
+
+      {task.docStatus && (
+        <div className="flex items-center gap-2 mb-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="font-semibold text-gray-700 dark:text-gray-300">DOC Status:</span>
+          </p>
+          <Badge 
+            variant={
+              task.docStatus === "done" 
+                ? "success" 
+                : task.docStatus === "yes"
+                ? "warning"
+                : "danger"
+            }
+            className="text-xs"
+          >
+            {task.docStatus === "done" 
+              ? "✓ Done" 
+              : task.docStatus === "yes"
+              ? "✓ Yes"
+              : "✗ No"}
+          </Badge>
         </div>
       )}
 

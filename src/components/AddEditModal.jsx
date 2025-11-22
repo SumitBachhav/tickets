@@ -16,6 +16,7 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
     notes: "",
     askedTo: "",
     askedToStatus: "pending",
+    docStatus: "no",
     tags: [],
   });
   const [tagInput, setTagInput] = useState("");
@@ -31,6 +32,7 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
         notes: task.notes || "",
         askedTo: task.askedTo || "",
         askedToStatus: task.askedToStatus || "pending",
+        docStatus: task.docStatus || "no",
         tags: task.tags || [],
       });
     } else {
@@ -42,6 +44,7 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
         notes: "",
         askedTo: "",
         askedToStatus: "pending",
+        docStatus: "no",
         tags: [],
       });
     }
@@ -236,6 +239,19 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
                   <button
                     type="button"
                     onClick={() =>
+                      setFormData({ ...formData, askedToStatus: "response-received" })
+                    }
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                      formData.askedToStatus === "response-received"
+                        ? "bg-blue-500 text-white shadow-md"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+                    }`}
+                  >
+                    RR
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
                       setFormData({ ...formData, askedToStatus: "done" })
                     }
                     className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
@@ -249,6 +265,53 @@ export const AddEditModal = ({ task, isOpen, onClose, onSave }) => {
                 </div>
               </div>
             )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              DOC Status
+            </label>
+            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData({ ...formData, docStatus: "no" })
+                }
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                  formData.docStatus === "no"
+                    ? "bg-red-500 text-white shadow-md"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+                }`}
+              >
+                No
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData({ ...formData, docStatus: "yes" })
+                }
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                  formData.docStatus === "yes"
+                    ? "bg-yellow-500 text-white shadow-md"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+                }`}
+              >
+                Yes
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData({ ...formData, docStatus: "done" })
+                }
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                  formData.docStatus === "done"
+                    ? "bg-green-500 text-white shadow-md"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+                }`}
+              >
+                Done
+              </button>
+            </div>
           </div>
 
           <div>
